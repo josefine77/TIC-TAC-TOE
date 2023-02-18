@@ -213,11 +213,6 @@ def start():
         felder.show()
         actions.spieler_dran()
         actions.computer_dran()
-        
-
-#um Sachen auszuprobieren
-def test():
-  pass  
 
 start()
 
