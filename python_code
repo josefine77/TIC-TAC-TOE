@@ -2,7 +2,6 @@ import random
 
 #Basis
 class board():
-   schwierigkeitsgrad = "einfach"
    beginner = "spieler"
 
 
@@ -14,9 +13,6 @@ class feld(board):
         self.diag = Diagonal
         self.value = " "
         self.pos = (self.row,self.col)
-
-    
-
 
 
 #bestimmt alle Felder und gibt ihnen die Attribute
@@ -133,27 +129,17 @@ class check(actions):
             return False
 
 
-#GEGNERTAKTIK (HIER WEITERMACHEN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
 class Gegner():
     zug = 0
     def feld_bestimmen():
         Gegner.zug += 1
-        if board.schwierigkeitsgrad == "einfach":
-            r = hilfen.zufall(1,3)
-            c = hilfen.zufall(1,3)
-            return (r,c)
-        else:
-            if Gegner.zug == 1:
-                return (1,1)
-                #return random.choice([(1,1),(1,3),(3,1),(3,3)])
-            if Gegner.zug == 2:
-                if felder.f4.value == "x" or felder.f7.value == "x" or felder.f8.value == "x":
-                    return (1,3)
-                elif felder.f2.value == "x" or felder.f3.value == "x" or felder.f6.value == "x":
-                    return (3,1)
+        r = hilfen.zufall(1,3)
+        c = hilfen.zufall(1,3)
+        return (r,c)
+        
 
 
-#kleine Zwischenhilfen fuer Formatierungen ect
+#Zwischenhilfen fuer Formatierungen
 class hilfen(board):
     def input_to_pos(text):
         letters = ["A","B","C"]
@@ -182,14 +168,6 @@ def einleitung():
     print("(Achte darauf alles richtig und gross zu schreiben)")
     print("Viel Spass.")
 
-    #Schwierigkeitsgrad
-    print("Auf welchem Schwierigkeitsgrad willst du spielen?")
-    print("(1) leicht")
-    #print("(2) schwer")
-    antwort = input()
-    #if antwort == "2":
-        #board.schwierigkeitsgrad = "schwer"
-
     #wer anfangen soll
     print("Wer soll anfangen?")
     print("(1) Du")
@@ -204,7 +182,6 @@ def einleitung():
 #was passiert/startet alles
 def start():
     einleitung()
-    test()
     
     while board.beginner=="computer":
         actions.computer_dran()
@@ -215,4 +192,3 @@ def start():
         actions.computer_dran()
 
 start()
-
