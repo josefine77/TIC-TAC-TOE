@@ -1,0 +1,223 @@
+import random
+
+#Basis
+class board():
+   schwierigkeitsgrad = "einfach"
+   beginner = "spieler"
+
+
+#Steuerung/Eigenschaften von Feldern
+class feld(board):
+    def __init__(self, Row, Col, Diagonal):        
+        self.row = Row
+        self.col = Col
+        self.diag = Diagonal
+        self.value = " "
+        self.pos = (self.row,self.col)
+
+    
+
+
+
+#bestimmt alle Felder und gibt ihnen die Attribute
+class felder(feld):
+    #alle Felder bestimmen  und zuweisen
+    f1 = feld(1,1,1)
+    f2 = feld(1,2,0)
+    f3 = feld(1,3,2)
+    f4 = feld(2,1,0)
+    f5 = feld(2,2,(1,2))
+    f6 = feld(2,3,0)
+    f7 = feld(3,1,2)
+    f8 = feld(3,2,0)
+    f9 = feld(3,3,1)
+    alle_felder = [f1,f2,f3,f4,f5,f6,f7,f8,f9]
+
+    #zeigt Spielfeld an
+    def show():
+        print("       A    B    C")
+        a = 0
+        while a <= 8:
+            print(int(a/3+1),": ", [i.value for i in felder.alle_felder[a:a+3]])
+            a += 3
+
+#was passieren kann auf dem Board            
+class actions(board):
+
+    #setzt Wert auf bestimmtes Feld
+    def setze(r,c,val):
+        hilfen.find(r,c).value = val
+        felder.show()
+
+
+    #wenn Spieler dran ist
+    def spieler_dran():
+
+        #gucken ob unentschieden ist
+        unentschieden = True
+        for i in felder.alle_felder:
+            if i.value == " ":
+                unentschieden = False
+        if unentschieden == True:
+            print("Unentschieden!")
+            exit()
+
+        #input, wo der Spieler hinwill
+        print("Wo willst du hinsetzen?")
+        answer = input()
+        answer = hilfen.input_to_pos(answer)
+        
+        #auf ausgesuchtes Feld setzen
+        if hilfen.find(answer[0],answer[1]).value == " ":
+            actions.setze(answer[0],answer[1], "x")
+            #schauen ob er gewonnen hat
+            if check.check_all("x"):
+                print("Super! DU hast gewonnen!")
+                exit()
+        #wenn er auf ein besetztes Feld geht
+        else:
+            print("Dieses Feld ist schon belegt, bitte nimm ein anderes.")
+            actions.spieler_dran()
+        
+    #wenn Computer dran ist
+    def computer_dran():
+        r,c = Gegner.feld_bestimmen()
+        if hilfen.find(r,c).value == " ":
+            actions.setze(r,c,"o")
+            print("Computer hat gesetzt.")
+            if check.check_all("o"):
+                print("Du hast leider verloren...")
+                exit()
+        else:
+            actions.computer_dran()
+
+
+#schaut, ob schon 3 in einer Reihe/Spalte/Zeile sind
+class check(actions):
+    #checkt, ob schon 3 in einer Reihe ect sind
+    def check_all(val):
+        #ueberprueft Zeilen
+        def row_check():
+            for i in range(3):
+                count_r = 0
+                for f in felder.alle_felder:
+                    if f.row == i+1 and f.value == val:
+                        count_r += 1
+                if count_r==3:
+                    return True
+            return False
+        #ueberprueft Spalten
+        def col_check():
+            for i in range(3):
+                count_c = 0
+                for f in felder.alle_felder:
+                    if f.col == i+1 and f.value == val:
+                        count_c += 1
+                if count_c==3:
+                    return True
+            return False
+        #ueberprueft Diagonalen
+        def dia_check():
+            for i in range(2):
+                count_d = 0
+                for f in felder.alle_felder:
+                    if (f.diag == i+1 or f.diag ==(1,2)) and f.value == val:
+                        count_d += 1
+                if count_d==3:
+                    return True
+            return False
+        #ueberprueft alle
+        if row_check() or col_check() or dia_check():
+            return True
+        else:
+            return False
+
+
+#GEGNERTAKTIK (HIER WEITERMACHEN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+class Gegner():
+    zug = 0
+    def feld_bestimmen():
+        Gegner.zug += 1
+        if board.schwierigkeitsgrad == "einfach":
+            r = hilfen.zufall(1,3)
+            c = hilfen.zufall(1,3)
+            return (r,c)
+        else:
+            if Gegner.zug == 1:
+                return (1,1)
+                #return random.choice([(1,1),(1,3),(3,1),(3,3)])
+            if Gegner.zug == 2:
+                if felder.f4.value == "x" or felder.f7.value == "x" or felder.f8.value == "x":
+                    return (1,3)
+                elif felder.f2.value == "x" or felder.f3.value == "x" or felder.f6.value == "x":
+                    return (3,1)
+
+
+#kleine Zwischenhilfen fuer Formatierungen ect
+class hilfen(board):
+    def input_to_pos(text):
+        letters = ["A","B","C"]
+        row = int(text[1])
+        col = int(letters.index(text[0]))+1
+        return [row,col]
+
+    #sucht bestimmtes Feld auf Board anhand von Koordinaten und gibt dieses als Objekt wieder
+    def find(r,c):
+        for i in felder.alle_felder:
+            if i.row == r and i.col == c:
+                return i
+    #zufaellige Zahl aus Spanne
+    def zufall(start, ende):
+        n = random.randrange(start,ende+1)
+        return n
+
+
+#Einleitungstext + Entscheidungen
+def einleitung():
+    #Begruessung
+    print("***Herzlich Willkommen***")
+    print("zu......")
+    print("TIC TAC TOE")
+    print("Schreibe bitte, auf welches Feld du setzen willst, beispielsweise 'B2'.")
+    print("(Achte darauf alles richtig und gross zu schreiben)")
+    print("Viel Spass.")
+
+    #Schwierigkeitsgrad
+    print("Auf welchem Schwierigkeitsgrad willst du spielen?")
+    print("(1) leicht")
+    #print("(2) schwer")
+    antwort = input()
+    #if antwort == "2":
+        #board.schwierigkeitsgrad = "schwer"
+
+    #wer anfangen soll
+    print("Wer soll anfangen?")
+    print("(1) Du")
+    print("(2) Der Computer")
+    antwort = input()
+    if antwort == "1":
+        board.beginner = "spieler"
+    else:
+        board.beginner = "computer"
+
+
+#was passiert/startet alles
+def start():
+    einleitung()
+    test()
+    
+    while board.beginner=="computer":
+        actions.computer_dran()
+        actions.spieler_dran()
+    while board.beginner=="spieler":
+        felder.show()
+        actions.spieler_dran()
+        actions.computer_dran()
+        
+
+#um Sachen auszuprobieren
+def test():
+  pass  
+
+start()
+
